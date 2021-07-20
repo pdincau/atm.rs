@@ -3,13 +3,13 @@ use std::collections::HashMap;
 use thiserror::Error;
 
 struct Atm {
-    bills: HashMap<i32, i32>
+    bills: HashMap<i32, i32>,
 }
 
 impl Atm {
     pub fn new() -> Atm {
         Atm {
-            bills: HashMap::new()
+            bills: HashMap::new(),
         }
     }
 
@@ -22,21 +22,33 @@ impl Atm {
         self.bills.insert(denomination, quantity + actual);
     }
 
-    pub fn withdraw(&self, _amount: i32) -> Result<(), AtmError>{
-        Err(AtmError::NeedsService)
+    pub fn withdraw(&self, amount: i32) -> Result<HashMap<i32, i32>, AtmError> {
+        let mut bundle = HashMap::new();
+        let mut remainder = amount;
+
+        for (denomination, quantity) in self.bills.clone() {
+            if remainder > denomination && quantity > 0 && remainder / denomination < quantity {
+                bundle.insert(denomination, remainder / denomination);
+                remainder -= denomination * quantity;
+            }
+        }
+
+        if remainder > 0 {
+            Err(AtmError::NeedsService)
+        } else {
+            Ok(bundle)
+        }
     }
 }
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, PartialEq)]
 pub enum AtmError {
     #[error("This ATM requires servicing")]
-    NeedsService
+    NeedsService,
 }
 
 #[cfg(test)]
 mod tests {
-    use claim::assert_err;
-
     use super::*;
 
     #[test]
@@ -69,6 +81,23 @@ mod tests {
     fn withdraw_fails_if_there_is_not_enough_money() {
         let atm = Atm::new();
 
-        assert_err!(atm.withdraw(25));
+        assert_eq!(AtmError::NeedsService, atm.withdraw(25).unwrap_err());
+    }
+
+    #[test]
+    fn withdraw_returns_bundle_for_desired_amount() {
+        let mut atm = Atm::new();
+
+        atm.load_bills_for(10, 5);
+
+        let bundle = atm.withdraw(25).unwrap();
+
+        let mut amount = 0;
+
+        for (denomination, quantity) in bundle {
+            amount += denomination * quantity;
+        }
+
+        assert_eq!(amount, 25);
     }
 }

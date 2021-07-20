@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use thiserror::Error;
+
 struct Atm {
     bills: HashMap<i32, i32>
 }
@@ -19,10 +21,22 @@ impl Atm {
         let actual = self.bills.get(&denomination).unwrap_or(&0).to_owned();
         self.bills.insert(denomination, quantity + actual);
     }
+
+    pub fn withdraw(&self, _amount: i32) -> Result<(), AtmError>{
+        Err(AtmError::NeedsService)
+    }
+}
+
+#[derive(Debug, Error)]
+pub enum AtmError {
+    #[error("This ATM requires servicing")]
+    NeedsService
 }
 
 #[cfg(test)]
 mod tests {
+    use claim::assert_err;
+
     use super::*;
 
     #[test]
@@ -50,5 +64,11 @@ mod tests {
 
         assert_eq!(4, atm.bills_for(20));
     }
-    
+
+    #[test]
+    fn withdraw_fails_if_there_is_not_enough_money() {
+        let atm = Atm::new();
+
+        assert_err!(atm.withdraw(25));
+    }
 }

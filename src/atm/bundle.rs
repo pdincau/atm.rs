@@ -28,4 +28,20 @@ impl Bundle {
         let actual = self.bills.get(&denomination).unwrap_or(&0).to_owned();
         self.bills.insert(denomination, quantity + actual);
     }
+
+    pub fn get_total_amount(&self) -> i32 {
+        0
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn total_amount_returns_total_for_all_denominations() {
+        let bundle = Bundle::new();
+
+        assert_eq!(0, bundle.get_total_amount());
+    }
 }

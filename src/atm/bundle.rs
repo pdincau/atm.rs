@@ -25,7 +25,7 @@ impl Bundle {
         self.bills.get(&denomination).unwrap_or(&0).to_owned()
     }
 
-    pub fn load_bills_for(&mut self, quantity: i32, denomination: i32) {
+    pub fn load_bills(&mut self, quantity: i32, denomination: i32) {
         let actual = self.bills.get(&denomination).unwrap_or(&0).to_owned();
         self.bills.insert(denomination, quantity + actual);
     }
@@ -44,14 +44,40 @@ mod tests {
     use super::*;
 
     #[test]
+    fn load_bills_for_sets_current_number_of_bills_for_denomination() {
+        let mut bundle = Bundle::new();
+
+        assert_eq!(0, bundle.get(5));
+        assert_eq!(0, bundle.get(10));
+
+        bundle.load_bills(3, 5);
+
+        assert_eq!(3, bundle.get(5));
+        assert_eq!(0, bundle.get(10));
+    }
+
+    #[test]
+    fn load_bills_for_updated_current_number_of_bills_if_some_are_already_present() {
+        let mut bundle = Bundle::new();
+
+        bundle.load_bills(1, 20);
+
+        assert_eq!(1, bundle.get(20));
+
+        bundle.load_bills(3, 20);
+
+        assert_eq!(4, bundle.get(20));
+    }
+
+    #[test]
     fn total_amount_returns_total_for_all_denominations() {
         let mut bundle = Bundle::new();
 
         assert_eq!(0, bundle.get_total_amount());
 
-        bundle.load_bills_for(10, 5);
-        bundle.load_bills_for(2, 20);
-        bundle.load_bills_for(1, 50);
+        bundle.load_bills(10, 5);
+        bundle.load_bills(2, 20);
+        bundle.load_bills(1, 50);
 
         assert_eq!(10*5+2*20+1*50, bundle.get_total_amount());
     }

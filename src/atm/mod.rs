@@ -23,7 +23,7 @@ impl Atm {
     }
 
     pub fn load_bills_for(&mut self, quantity: i32, denomination: i32) {
-        self.bundle.load_bills_for(quantity, denomination);
+        self.bundle.load_bills(quantity, denomination);
     }
 
     pub fn withdraw(&self, amount: i32) -> Result<Bundle, AtmError> {
@@ -33,7 +33,7 @@ impl Atm {
         for denomination in Denomination::iter() {
             let quantity = self.bundle.get(denomination.value());
             if remainder > denomination.value() && quantity > 0 && remainder / denomination.value() < quantity {
-                withdrawal.load_bills_for(remainder / denomination.value(), denomination.value());
+                withdrawal.load_bills(remainder / denomination.value(), denomination.value());
                 remainder -= denomination.value() * quantity;
             }
         }
@@ -55,32 +55,6 @@ pub enum AtmError {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn load_bills_for_sets_current_number_of_bills_for_denomination() {
-        let mut atm = Atm::new();
-
-        assert_eq!(0, atm.bills_for(5));
-        assert_eq!(0, atm.bills_for(10));
-
-        atm.load_bills_for(3, 5);
-
-        assert_eq!(3, atm.bills_for(5));
-        assert_eq!(0, atm.bills_for(10));
-    }
-
-    #[test]
-    fn load_bills_for_updated_current_number_of_bills_if_some_are_already_present() {
-        let mut atm = Atm::new();
-
-        atm.load_bills_for(1, 20);
-
-        assert_eq!(1, atm.bills_for(20));
-
-        atm.load_bills_for(3, 20);
-
-        assert_eq!(4, atm.bills_for(20));
-    }
 
     #[test]
     fn withdraw_fails_if_there_is_not_enough_money() {

@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use strum::IntoEnumIterator;
 use thiserror::Error;
 
@@ -28,14 +26,14 @@ impl Atm {
         self.bundle.load_bills_for(quantity, denomination);
     }
 
-    pub fn withdraw(&self, amount: i32) -> Result<HashMap<i32, i32>, AtmError> {
-        let mut withdrawal = HashMap::new();
+    pub fn withdraw(&self, amount: i32) -> Result<Bundle, AtmError> {
+        let mut withdrawal = Bundle::new();
         let mut remainder = amount;
 
         for denomination in Denomination::iter() {
             let quantity = self.bundle.get(denomination.value());
             if remainder > denomination.value() && quantity > 0 && remainder / denomination.value() < quantity {
-                withdrawal.insert(denomination.value(), remainder / denomination.value());
+                withdrawal.load_bills_for(remainder / denomination.value(), denomination.value());
                 remainder -= denomination.value() * quantity;
             }
         }
@@ -99,12 +97,6 @@ mod tests {
 
         let bundle = atm.withdraw(25).unwrap();
 
-        let mut amount = 0;
-
-        for (denomination, quantity) in bundle {
-            amount += denomination * quantity;
-        }
-
-        assert_eq!(amount, 25);
+        assert_eq!(25, bundle.get_total_amount());
     }
 }

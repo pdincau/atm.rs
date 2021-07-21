@@ -4,6 +4,7 @@ use strum::IntoEnumIterator;
 
 use crate::atm::denomination::Denomination;
 
+#[derive(Debug)]
 pub struct Bundle {
     bills: HashMap<i32, i32>,
 }
@@ -30,7 +31,11 @@ impl Bundle {
     }
 
     pub fn get_total_amount(&self) -> i32 {
-        0
+        let mut amount = 0;
+        for denomination in Denomination::iter() {
+            amount += denomination.value() * self.bills.get(&denomination.value()).unwrap_or(&0);
+        }
+        amount
     }
 }
 
@@ -40,8 +45,14 @@ mod tests {
 
     #[test]
     fn total_amount_returns_total_for_all_denominations() {
-        let bundle = Bundle::new();
+        let mut bundle = Bundle::new();
 
         assert_eq!(0, bundle.get_total_amount());
+
+        bundle.load_bills_for(10, 5);
+        bundle.load_bills_for(2, 20);
+        bundle.load_bills_for(1, 50);
+
+        assert_eq!(10*5+2*20+1*50, bundle.get_total_amount());
     }
 }

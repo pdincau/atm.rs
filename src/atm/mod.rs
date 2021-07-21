@@ -1,54 +1,13 @@
 use std::collections::HashMap;
 
 use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
-
 use thiserror::Error;
 
-#[derive(EnumIter)]
-enum Denomination {
-    Five,
-    Ten,
-    Twenty,
-    Fifty,
-}
+use crate::atm::bundle::Bundle;
+use crate::atm::denomination::Denomination;
 
-impl Denomination {
-    fn value(&self) -> i32 {
-        match *self {
-            Denomination::Five => 5,
-            Denomination::Ten => 10,
-            Denomination::Twenty => 20,
-            Denomination::Fifty => 50,
-        }
-    }
-}
-
-struct Bundle {
-    bills: HashMap<i32, i32>,
-}
-
-impl Bundle {
-    pub fn new() -> Bundle {
-        let mut initial_bills = HashMap::new();
-        for denomination in Denomination::iter() {
-            initial_bills.insert(denomination.value(), 0);
-        }
-
-        Bundle {
-            bills: initial_bills
-        }
-    }
-
-    pub fn get(&self, denomination: i32) -> i32 {
-        self.bills.get(&denomination).unwrap_or(&0).to_owned()
-    }
-
-    pub fn load_bills_for(&mut self, quantity: i32, denomination: i32) {
-        let actual = self.bills.get(&denomination).unwrap_or(&0).to_owned();
-        self.bills.insert(denomination, quantity + actual);
-    }
-}
+mod bundle;
+mod denomination;
 
 struct Atm {
     bundle: Bundle,

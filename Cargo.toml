@@ -8,4 +8,6 @@ edition = "2018"
 
 [dependencies]
 claim = "0.5.0"
+strum = "0.21.0"
+strum_macros = "0.21.1"
 thiserror = "1.0.26"

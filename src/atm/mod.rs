@@ -1,25 +1,46 @@
 use std::collections::HashMap;
 
+use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
+
 use thiserror::Error;
 
-struct Atm {
+#[derive(EnumIter)]
+enum Denomination {
+    Five,
+    Ten,
+    Twenty,
+    Fifty,
+}
+
+impl Denomination {
+    fn value(&self) -> i32 {
+        match *self {
+            Denomination::Five => 5,
+            Denomination::Ten => 10,
+            Denomination::Twenty => 20,
+            Denomination::Fifty => 50,
+        }
+    }
+}
+
+struct Bundle {
     bills: HashMap<i32, i32>,
 }
 
-impl Atm {
-    pub fn new() -> Atm {
+impl Bundle {
+    pub fn new() -> Bundle {
         let mut initial_bills = HashMap::new();
-        initial_bills.insert(5, 0);
-        initial_bills.insert(10, 0);
-        initial_bills.insert(20, 0);
-        initial_bills.insert(50, 0);
+        for denomination in Denomination::iter() {
+            initial_bills.insert(denomination.value(), 0);
+        }
 
-        Atm {
+        Bundle {
             bills: initial_bills
         }
     }
 
-    pub fn bills_for(&self, denomination: i32) -> i32 {
+    pub fn get(&self, denomination: i32) -> i32 {
         self.bills.get(&denomination).unwrap_or(&0).to_owned()
     }
 
@@ -27,22 +48,43 @@ impl Atm {
         let actual = self.bills.get(&denomination).unwrap_or(&0).to_owned();
         self.bills.insert(denomination, quantity + actual);
     }
+}
+
+struct Atm {
+    bundle: Bundle,
+}
+
+impl Atm {
+    pub fn new() -> Atm {
+        Atm {
+            bundle: Bundle::new(),
+        }
+    }
+
+    pub fn bills_for(&self, denomination: i32) -> i32 {
+        self.bundle.get(denomination).to_owned()
+    }
+
+    pub fn load_bills_for(&mut self, quantity: i32, denomination: i32) {
+        self.bundle.load_bills_for(quantity, denomination);
+    }
 
     pub fn withdraw(&self, amount: i32) -> Result<HashMap<i32, i32>, AtmError> {
-        let mut bundle = HashMap::new();
+        let mut withdrawal = HashMap::new();
         let mut remainder = amount;
 
-        for (denomination, quantity) in self.bills.clone() {
-            if remainder > denomination && quantity > 0 && remainder / denomination < quantity {
-                bundle.insert(denomination, remainder / denomination);
-                remainder -= denomination * quantity;
+        for denomination in Denomination::iter() {
+            let quantity = self.bundle.get(denomination.value());
+            if remainder > denomination.value() && quantity > 0 && remainder / denomination.value() < quantity {
+                withdrawal.insert(denomination.value(), remainder / denomination.value());
+                remainder -= denomination.value() * quantity;
             }
         }
 
         if remainder > 0 {
             Err(AtmError::NeedsService)
         } else {
-            Ok(bundle)
+            Ok(withdrawal)
         }
     }
 }

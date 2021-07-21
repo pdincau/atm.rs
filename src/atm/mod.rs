@@ -8,8 +8,14 @@ struct Atm {
 
 impl Atm {
     pub fn new() -> Atm {
+        let mut initial_bills = HashMap::new();
+        initial_bills.insert(5, 0);
+        initial_bills.insert(10, 0);
+        initial_bills.insert(20, 0);
+        initial_bills.insert(50, 0);
+
         Atm {
-            bills: HashMap::new(),
+            bills: initial_bills
         }
     }
 

@@ -33,7 +33,7 @@ impl Bundle {
     pub fn get_total_amount(&self) -> i32 {
         let mut amount = 0;
         for denomination in Denomination::iter() {
-            amount += denomination.value() * self.bills.get(&denomination).unwrap_or(&0);
+            amount += denomination.times(*self.bills.get(&denomination).unwrap_or(&0));
         }
         amount
     }

@@ -17,7 +17,7 @@ impl Bundle {
         }
 
         Bundle {
-            bills: initial_bills
+            bills: initial_bills,
         }
     }
 
@@ -79,6 +79,6 @@ mod tests {
         bundle.load_bills(2, Denomination::Twenty);
         bundle.load_bills(1, Denomination::Fifty);
 
-        assert_eq!(10*5+2*20+1*50, bundle.get_total_amount());
+        assert_eq!(10 * 5 + 2 * 20 + 1 * 50, bundle.get_total_amount());
     }
 }

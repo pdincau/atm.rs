@@ -6,14 +6,14 @@ use crate::atm::denomination::Denomination;
 
 #[derive(Debug)]
 pub struct Bundle {
-    bills: HashMap<i32, i32>,
+    bills: HashMap<Denomination, i32>,
 }
 
 impl Bundle {
     pub fn new() -> Bundle {
         let mut initial_bills = HashMap::new();
         for denomination in Denomination::iter() {
-            initial_bills.insert(denomination.value(), 0);
+            initial_bills.insert(denomination, 0);
         }
 
         Bundle {
@@ -21,11 +21,11 @@ impl Bundle {
         }
     }
 
-    pub fn get(&self, denomination: i32) -> i32 {
+    pub fn get(&self, denomination: Denomination) -> i32 {
         self.bills.get(&denomination).unwrap_or(&0).to_owned()
     }
 
-    pub fn load_bills(&mut self, quantity: i32, denomination: i32) {
+    pub fn load_bills(&mut self, quantity: i32, denomination: Denomination) {
         let actual = self.bills.get(&denomination).unwrap_or(&0).to_owned();
         self.bills.insert(denomination, quantity + actual);
     }
@@ -33,7 +33,7 @@ impl Bundle {
     pub fn get_total_amount(&self) -> i32 {
         let mut amount = 0;
         for denomination in Denomination::iter() {
-            amount += denomination.value() * self.bills.get(&denomination.value()).unwrap_or(&0);
+            amount += denomination.value() * self.bills.get(&denomination).unwrap_or(&0);
         }
         amount
     }
@@ -47,26 +47,26 @@ mod tests {
     fn load_bills_for_sets_current_number_of_bills_for_denomination() {
         let mut bundle = Bundle::new();
 
-        assert_eq!(0, bundle.get(5));
-        assert_eq!(0, bundle.get(10));
+        assert_eq!(0, bundle.get(Denomination::Five));
+        assert_eq!(0, bundle.get(Denomination::Ten));
 
-        bundle.load_bills(3, 5);
+        bundle.load_bills(3, Denomination::Five);
 
-        assert_eq!(3, bundle.get(5));
-        assert_eq!(0, bundle.get(10));
+        assert_eq!(3, bundle.get(Denomination::Five));
+        assert_eq!(0, bundle.get(Denomination::Ten));
     }
 
     #[test]
     fn load_bills_for_updated_current_number_of_bills_if_some_are_already_present() {
         let mut bundle = Bundle::new();
 
-        bundle.load_bills(1, 20);
+        bundle.load_bills(1, Denomination::Twenty);
 
-        assert_eq!(1, bundle.get(20));
+        assert_eq!(1, bundle.get(Denomination::Twenty));
 
-        bundle.load_bills(3, 20);
+        bundle.load_bills(3, Denomination::Twenty);
 
-        assert_eq!(4, bundle.get(20));
+        assert_eq!(4, bundle.get(Denomination::Twenty));
     }
 
     #[test]
@@ -75,9 +75,9 @@ mod tests {
 
         assert_eq!(0, bundle.get_total_amount());
 
-        bundle.load_bills(10, 5);
-        bundle.load_bills(2, 20);
-        bundle.load_bills(1, 50);
+        bundle.load_bills(10, Denomination::Five);
+        bundle.load_bills(2, Denomination::Twenty);
+        bundle.load_bills(1, Denomination::Fifty);
 
         assert_eq!(10*5+2*20+1*50, bundle.get_total_amount());
     }

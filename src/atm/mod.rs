@@ -18,11 +18,11 @@ impl Atm {
         }
     }
 
-    pub fn bills_for(&self, denomination: i32) -> i32 {
+    pub fn bills_for(&self, denomination: Denomination) -> i32 {
         self.bundle.get(denomination).to_owned()
     }
 
-    pub fn load_bills_for(&mut self, quantity: i32, denomination: i32) {
+    pub fn load_bills_for(&mut self, quantity: i32, denomination: Denomination) {
         self.bundle.load_bills(quantity, denomination);
     }
 
@@ -31,9 +31,9 @@ impl Atm {
         let mut remainder = amount;
 
         for denomination in Denomination::iter() {
-            let quantity = self.bundle.get(denomination.value());
+            let quantity = self.bundle.get(denomination);
             if remainder > denomination.value() && quantity > 0 && remainder / denomination.value() < quantity {
-                withdrawal.load_bills(remainder / denomination.value(), denomination.value());
+                withdrawal.load_bills(remainder / denomination.value(), denomination);
                 remainder -= denomination.value() * quantity;
             }
         }
@@ -67,7 +67,7 @@ mod tests {
     fn withdraw_returns_bundle_for_desired_amount() {
         let mut atm = Atm::new();
 
-        atm.load_bills_for(10, 5);
+        atm.load_bills_for(10, Denomination::Five);
 
         let bundle = atm.withdraw(25).unwrap();
 

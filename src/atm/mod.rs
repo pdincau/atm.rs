@@ -34,7 +34,7 @@ impl Atm {
             let quantity = self.bundle.get(denomination);
             if remainder > denomination.value() && quantity > 0 && remainder / denomination.value() < quantity {
                 withdrawal.load_bills(remainder / denomination.value(), denomination);
-                remainder -= denomination.value() * quantity;
+                remainder -= denomination.times(quantity);
             }
         }
 

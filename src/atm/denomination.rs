@@ -17,4 +17,19 @@ impl Denomination {
             Denomination::Fifty => 50,
         }
     }
+
+    pub fn times(&self, quantity: i32) -> i32 {
+        self.value() * quantity
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn times_returns_total_based_on_denomination() {
+        assert_eq!(20, Denomination::Ten.times(2));
+        assert_eq!(150, Denomination::Fifty.times(3));
+    }
 }

@@ -7,25 +7,30 @@ use crate::atm::denomination::Denomination;
 mod bundle;
 mod denomination;
 
+#[allow(dead_code)]
 struct Atm {
     bundle: Bundle,
 }
 
 impl Atm {
+    #[allow(dead_code)]
     pub fn new() -> Atm {
         Atm {
             bundle: Bundle::new(),
         }
     }
 
+    #[allow(dead_code)]
     pub fn bills_for(&self, denomination: Denomination) -> i32 {
         self.bundle.get(denomination).to_owned()
     }
 
+    #[allow(dead_code)]
     pub fn load_bills_for(&mut self, quantity: i32, denomination: Denomination) {
         self.bundle.load_bills(quantity, denomination);
     }
 
+    #[allow(dead_code)]
     pub fn withdraw(&self, amount: i32) -> Result<Bundle, AtmError> {
         let mut withdrawal = Bundle::new();
         let mut remainder = amount;

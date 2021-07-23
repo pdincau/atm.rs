@@ -30,6 +30,7 @@ impl Bundle {
         self.bills.insert(denomination, quantity + actual);
     }
 
+    #[allow(dead_code)]
     pub fn get_total_amount(&self) -> i32 {
         let mut amount = 0;
         for denomination in Denomination::iter() {

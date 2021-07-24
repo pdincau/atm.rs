@@ -21,15 +21,17 @@ impl Atm {
     }
 
     #[allow(dead_code)]
-    pub fn withdraw(&self, amount: i32) -> Result<Bundle, AtmError> {
+    pub fn withdraw(&mut self, amount: i32) -> Result<Bundle, AtmError> {
         let mut withdrawal = Bundle::new();
         let mut remainder = amount;
 
         for denomination in Denomination::iter() {
             let quantity = self.bundle.get(denomination);
-            if quantity > 0 && denomination.bills_for(remainder) < quantity {
-                withdrawal.load_bills(denomination.bills_for(remainder), denomination);
+            let bills_for_remainder = denomination.bills_for(remainder);
+            if quantity > 0 && bills_for_remainder < quantity {
+                withdrawal.load_bills(bills_for_remainder, denomination);
                 remainder -= denomination.times(quantity);
+                self.bundle.load_bills(-bills_for_remainder, denomination);
             }
         }
 
@@ -53,7 +55,7 @@ mod tests {
 
     #[test]
     fn withdraw_fails_if_there_is_not_enough_money() {
-        let atm = Atm::new();
+        let mut atm = Atm::new();
 
         assert_eq!(AtmError::NeedsService, atm.withdraw(25).unwrap_err());
     }
@@ -69,5 +71,7 @@ mod tests {
         let bundle = atm.withdraw(25).unwrap();
 
         assert_eq!(25, bundle.get_total_amount());
+        assert_eq!(5, atm.bundle.get(Denomination::Five));
+
     }
 }

@@ -28,14 +28,14 @@ impl Atm {
         for denomination in Denomination::iter() {
             let quantity = self.bundle.get(denomination);
             let bills_for_remainder = denomination.bills_for(remainder);
-            if quantity > 0 && bills_for_remainder < quantity {
+            if bills_for_remainder < quantity {
                 withdrawal.load_bills(bills_for_remainder, denomination);
-                remainder -= denomination.times(quantity);
+                remainder -= denomination.times(bills_for_remainder);
                 self.bundle.unload_bills(bills_for_remainder, denomination);
             }
         }
 
-        if remainder > 0 {
+        if remainder != 0 {
             Err(AtmError::NeedsService)
         } else {
             Ok(withdrawal)

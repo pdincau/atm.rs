@@ -30,6 +30,10 @@ impl Bundle {
         self.bills.insert(denomination, quantity + actual);
     }
 
+    pub fn unload_bills(&mut self, quantity: i32, denomination: Denomination) {
+        self.load_bills(-quantity, denomination);
+    }
+
     #[allow(dead_code)]
     pub fn get_total_amount(&self) -> i32 {
         let mut amount = 0;

@@ -31,7 +31,7 @@ impl Atm {
             if quantity > 0 && bills_for_remainder < quantity {
                 withdrawal.load_bills(bills_for_remainder, denomination);
                 remainder -= denomination.times(quantity);
-                self.bundle.load_bills(-bills_for_remainder, denomination);
+                self.bundle.unload_bills(bills_for_remainder, denomination);
             }
         }
 

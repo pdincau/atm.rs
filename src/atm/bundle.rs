@@ -75,6 +75,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::identity_op)]
     fn total_amount_returns_total_for_all_denominations() {
         let mut bundle = Bundle::new();
 

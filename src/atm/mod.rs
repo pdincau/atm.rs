@@ -87,4 +87,25 @@ mod tests {
         assert_eq!(0, atm.bundle.get(Denomination::Five));
         assert_eq!(0, atm.bundle.get(Denomination::Ten));
     }
+
+    #[test]
+    fn withdraw_uses_bigger_denominations_first() {
+        let mut atm = Atm::new();
+
+        atm.bundle.load_bills(10, Denomination::Five);
+        atm.bundle.load_bills(10, Denomination::Ten);
+        atm.bundle.load_bills(10, Denomination::Twenty);
+
+        let mut expected = Bundle::new();
+        expected.load_bills(2, Denomination::Twenty);
+        expected.load_bills(1, Denomination::Ten);
+
+        let mut leftover = Bundle::new();
+        leftover.load_bills(8, Denomination::Twenty);
+        leftover.load_bills(9, Denomination::Ten);
+        leftover.load_bills(10, Denomination::Five);
+
+        assert_eq!(expected, atm.withdraw(50).unwrap());
+        assert_eq!(leftover, atm.bundle);
+    }
 }

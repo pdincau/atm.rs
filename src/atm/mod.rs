@@ -27,10 +27,7 @@ impl Atm {
 
         for denomination in Denomination::iter() {
             let quantity = self.bundle.get(denomination);
-            if remainder > denomination.value()
-                && quantity > 0
-                && denomination.bills_for(remainder) < quantity
-            {
+            if quantity > 0 && denomination.bills_for(remainder) < quantity {
                 withdrawal.load_bills(denomination.bills_for(remainder), denomination);
                 remainder -= denomination.times(quantity);
             }
@@ -42,8 +39,6 @@ impl Atm {
             Ok(withdrawal)
         }
     }
-
-
 }
 
 #[derive(Debug, Error, PartialEq)]

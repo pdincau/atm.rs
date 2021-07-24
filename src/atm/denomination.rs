@@ -9,7 +9,7 @@ pub enum Denomination {
 }
 
 impl Denomination {
-    pub fn value(&self) -> i32 {
+    fn value(&self) -> i32 {
         match *self {
             Denomination::Five => 5,
             Denomination::Ten => 10,

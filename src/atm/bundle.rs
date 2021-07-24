@@ -4,7 +4,7 @@ use strum::IntoEnumIterator;
 
 use crate::atm::denomination::Denomination;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Bundle {
     bills: HashMap<Denomination, i32>,
 }
@@ -86,5 +86,24 @@ mod tests {
         bundle.load_bills(1, Denomination::Fifty);
 
         assert_eq!(10 * 5 + 2 * 20 + 1 * 50, bundle.get_total_amount());
+    }
+
+    #[test]
+    fn equals_is_based_on_contained_bills() {
+        let mut bundle = Bundle::new();
+
+        let mut other = Bundle::new();
+
+        assert_eq!(other, bundle);
+
+        other.load_bills(2, Denomination::Five);
+        other.load_bills(1, Denomination::Twenty);
+
+        assert_ne!(Bundle::new(), other);
+
+        bundle.load_bills(2, Denomination::Five);
+        bundle.load_bills(1, Denomination::Twenty);
+
+        assert_eq!(bundle, other);
     }
 }

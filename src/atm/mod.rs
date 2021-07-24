@@ -39,9 +39,9 @@ impl Atm {
             let quantity = self.bundle.get(denomination);
             if remainder > denomination.value()
                 && quantity > 0
-                && remainder / denomination.value() < quantity
+                && denomination.bills_for(&mut remainder) < quantity
             {
-                withdrawal.load_bills(remainder / denomination.value(), denomination);
+                withdrawal.load_bills(denomination.bills_for(&mut remainder), denomination);
                 remainder -= denomination.times(quantity);
             }
         }
@@ -52,6 +52,8 @@ impl Atm {
             Ok(withdrawal)
         }
     }
+
+
 }
 
 #[derive(Debug, Error, PartialEq)]

@@ -21,6 +21,10 @@ impl Denomination {
     pub fn times(&self, quantity: i32) -> i32 {
         self.value() * quantity
     }
+
+    pub fn bills_for(&self, remainder: &mut i32) -> i32 {
+        *remainder / self.value()
+    }
 }
 
 #[cfg(test)]
@@ -31,5 +35,12 @@ mod tests {
     fn times_returns_total_based_on_denomination() {
         assert_eq!(20, Denomination::Ten.times(2));
         assert_eq!(150, Denomination::Fifty.times(3));
+    }
+
+    #[test]
+    fn bills_for_returns_number_of_bills_whose_sum_is_not_greater_than_quantity() {
+        assert_eq!(1, Denomination::Five.bills_for(&mut 5));
+        assert_eq!(1, Denomination::Five.bills_for(&mut 7));
+        assert_eq!(2, Denomination::Five.bills_for(&mut 11));
     }
 }

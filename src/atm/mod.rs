@@ -60,7 +60,7 @@ mod tests {
     }
 
     #[test]
-    fn withdraw_returns_bundle_for_desired_amount() {
+    fn withdraw_exact_amount_for_one_denomination() {
         let mut atm = Atm::new();
 
         let quantity = 11;

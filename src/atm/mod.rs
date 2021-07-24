@@ -1,3 +1,5 @@
+use std::cmp;
+
 use strum::IntoEnumIterator;
 use thiserror::Error;
 
@@ -26,8 +28,9 @@ impl Atm {
         let mut remainder = amount;
 
         for denomination in Denomination::iter() {
-            if self.bundle.get(denomination) > 0 {
-                let bills_for_remainder = denomination.bills_for(remainder);
+            let quantity = self.bundle.get(denomination);
+            if quantity > 0 {
+                let bills_for_remainder = cmp::min(quantity, denomination.bills_for(remainder));
                 withdrawal.load_bills(bills_for_remainder, denomination);
                 remainder -= denomination.times(bills_for_remainder);
                 self.bundle.unload_bills(bills_for_remainder, denomination);
@@ -63,14 +66,26 @@ mod tests {
     fn withdraw_exact_amount_for_one_denomination() {
         let mut atm = Atm::new();
 
-        let quantity = 11;
-        let denomination = Denomination::Five;
-        atm.bundle.load_bills(quantity, denomination);
+        atm.bundle.load_bills(11, Denomination::Five);
 
         let bundle = atm.withdraw(25).unwrap();
 
         assert_eq!(25, bundle.get_total_amount());
         assert_eq!(6, atm.bundle.get(Denomination::Five));
 
+    }
+
+    #[test]
+    fn withdraw_exact_amount_with_two_denominations() {
+        let mut atm = Atm::new();
+
+        atm.bundle.load_bills(2, Denomination::Five);
+        atm.bundle.load_bills(4, Denomination::Ten);
+
+        let bundle = atm.withdraw(50).unwrap();
+
+        assert_eq!(50, bundle.get_total_amount());
+        assert_eq!(0, atm.bundle.get(Denomination::Five));
+        assert_eq!(0, atm.bundle.get(Denomination::Ten));
     }
 }

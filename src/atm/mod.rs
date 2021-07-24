@@ -9,7 +9,7 @@ mod denomination;
 
 #[allow(dead_code)]
 struct Atm {
-    bundle: Bundle,
+    pub bundle: Bundle,
 }
 
 impl Atm {
@@ -18,11 +18,6 @@ impl Atm {
         Atm {
             bundle: Bundle::new(),
         }
-    }
-
-    #[allow(dead_code)]
-    pub fn load_bills_for(&mut self, quantity: i32, denomination: Denomination) {
-        self.bundle.load_bills(quantity, denomination);
     }
 
     #[allow(dead_code)]
@@ -72,7 +67,9 @@ mod tests {
     fn withdraw_returns_bundle_for_desired_amount() {
         let mut atm = Atm::new();
 
-        atm.load_bills_for(10, Denomination::Five);
+        let quantity = 10;
+        let denomination = Denomination::Five;
+        atm.bundle.load_bills(quantity, denomination);
 
         let bundle = atm.withdraw(25).unwrap();
 

@@ -21,11 +21,6 @@ impl Atm {
     }
 
     #[allow(dead_code)]
-    pub fn bills_for(&self, denomination: Denomination) -> i32 {
-        self.bundle.get(denomination).to_owned()
-    }
-
-    #[allow(dead_code)]
     pub fn load_bills_for(&mut self, quantity: i32, denomination: Denomination) {
         self.bundle.load_bills(quantity, denomination);
     }

@@ -72,7 +72,6 @@ mod tests {
 
         assert_eq!(25, bundle.get_total_amount());
         assert_eq!(6, atm.bundle.get(Denomination::Five));
-
     }
 
     #[test]

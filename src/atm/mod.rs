@@ -26,8 +26,7 @@ impl Atm {
         let mut remainder = amount;
 
         for denomination in Denomination::iter() {
-            let quantity = self.bundle.get(denomination);
-            if bills_for_remainder < quantity {
+            if self.bundle.get(denomination) > 0 {
                 let bills_for_remainder = denomination.bills_for(remainder);
                 withdrawal.load_bills(bills_for_remainder, denomination);
                 remainder -= denomination.times(bills_for_remainder);
@@ -72,5 +71,6 @@ mod tests {
 
         assert_eq!(25, bundle.get_total_amount());
         assert_eq!(6, atm.bundle.get(Denomination::Five));
+
     }
 }

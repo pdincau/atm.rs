@@ -39,9 +39,9 @@ impl Atm {
             let quantity = self.bundle.get(denomination);
             if remainder > denomination.value()
                 && quantity > 0
-                && denomination.bills_for(&mut remainder) < quantity
+                && denomination.bills_for(remainder) < quantity
             {
-                withdrawal.load_bills(denomination.bills_for(&mut remainder), denomination);
+                withdrawal.load_bills(denomination.bills_for(remainder), denomination);
                 remainder -= denomination.times(quantity);
             }
         }

@@ -22,8 +22,8 @@ impl Denomination {
         self.value() * quantity
     }
 
-    pub fn bills_for(&self, remainder: &mut i32) -> i32 {
-        *remainder / self.value()
+    pub fn bills_for(&self, remainder: i32) -> i32 {
+        remainder / self.value()
     }
 }
 
@@ -39,8 +39,8 @@ mod tests {
 
     #[test]
     fn bills_for_returns_number_of_bills_whose_sum_is_not_greater_than_quantity() {
-        assert_eq!(1, Denomination::Five.bills_for(&mut 5));
-        assert_eq!(1, Denomination::Five.bills_for(&mut 7));
-        assert_eq!(2, Denomination::Five.bills_for(&mut 11));
+        assert_eq!(1, Denomination::Five.bills_for(5));
+        assert_eq!(1, Denomination::Five.bills_for(7));
+        assert_eq!(2, Denomination::Five.bills_for(11));
     }
 }

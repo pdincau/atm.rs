@@ -64,14 +64,14 @@ mod tests {
     fn withdraw_returns_bundle_for_desired_amount() {
         let mut atm = Atm::new();
 
-        let quantity = 10;
+        let quantity = 11;
         let denomination = Denomination::Five;
         atm.bundle.load_bills(quantity, denomination);
 
         let bundle = atm.withdraw(25).unwrap();
 
         assert_eq!(25, bundle.get_total_amount());
-        assert_eq!(5, atm.bundle.get(Denomination::Five));
+        assert_eq!(6, atm.bundle.get(Denomination::Five));
 
     }
 }

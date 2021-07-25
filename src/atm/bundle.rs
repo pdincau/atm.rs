@@ -35,6 +35,19 @@ impl Bundle {
     }
 
     #[allow(dead_code)]
+    pub fn load_all_bills(&mut self, quantities: [i32; 4]) {
+        for (index, quantity) in quantities.iter().enumerate() {
+            let denomination = match index {
+                0 => Denomination::Fifty,
+                1 => Denomination::Twenty,
+                2 => Denomination::Ten,
+                _ => Denomination::Five,
+            };
+            self.load_bills(*quantity, denomination);
+        }
+    }
+
+    #[allow(dead_code)]
     pub fn get_total_amount(&self) -> i32 {
         let mut amount = 0;
         for denomination in Denomination::iter() {
@@ -105,5 +118,17 @@ mod tests {
         bundle.load_bills(1, Denomination::Twenty);
 
         assert_eq!(bundle, other);
+    }
+
+    #[test]
+    fn load_bills_sets_all_denominations() {
+        let mut bundle = Bundle::new();
+
+        bundle.load_all_bills([1, 2, 3, 4]);
+
+        assert_eq!(1, bundle.get(Denomination::Fifty));
+        assert_eq!(2, bundle.get(Denomination::Twenty));
+        assert_eq!(3, bundle.get(Denomination::Ten));
+        assert_eq!(4, bundle.get(Denomination::Five));
     }
 }

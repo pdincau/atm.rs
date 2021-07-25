@@ -30,10 +30,10 @@ impl Atm {
         for denomination in Denomination::iter() {
             let quantity = self.bundle.get(denomination);
             if quantity > 0 {
-                let bills_for_remainder = cmp::min(quantity, denomination.bills_for(remainder));
-                withdrawal.load_bills(bills_for_remainder, denomination);
-                remainder -= denomination.times(bills_for_remainder);
-                self.bundle.unload_bills(bills_for_remainder, denomination);
+                let bills_for_withdrawal = cmp::min(quantity, denomination.bills_for(remainder));
+                withdrawal.load_bills(bills_for_withdrawal, denomination);
+                remainder -= denomination.times(bills_for_withdrawal);
+                self.bundle.unload_bills(bills_for_withdrawal, denomination);
             }
         }
 

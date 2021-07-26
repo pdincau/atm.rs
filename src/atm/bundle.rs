@@ -62,7 +62,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn load_bills_for_sets_current_number_of_bills_for_denomination() {
+    fn load_bills_sets_current_number_of_bills_for_denomination() {
         let mut bundle = Bundle::new();
 
         assert_eq!(0, bundle.get(Denomination::Five));
@@ -75,7 +75,7 @@ mod tests {
     }
 
     #[test]
-    fn load_bills_for_updated_current_number_of_bills_if_some_are_already_present() {
+    fn load_bills_updates_current_number_of_bills_if_some_are_already_present() {
         let mut bundle = Bundle::new();
 
         bundle.load_bills(1, Denomination::Twenty);
@@ -94,9 +94,7 @@ mod tests {
 
         assert_eq!(0, bundle.get_total_amount());
 
-        bundle.load_bills(10, Denomination::Five);
-        bundle.load_bills(2, Denomination::Twenty);
-        bundle.load_bills(1, Denomination::Fifty);
+        bundle.load_all_bills([1, 2, 0, 10]);
 
         assert_eq!(10 * 5 + 2 * 20 + 1 * 50, bundle.get_total_amount());
     }
@@ -121,7 +119,7 @@ mod tests {
     }
 
     #[test]
-    fn load_bills_sets_all_denominations() {
+    fn load_all_bills_sets_all_denominations() {
         let mut bundle = Bundle::new();
 
         bundle.load_all_bills([1, 2, 3, 4]);

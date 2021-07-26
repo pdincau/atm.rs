@@ -92,18 +92,15 @@ mod tests {
     fn withdraw_uses_bigger_denominations_first() {
         let mut atm = Atm::new();
 
-        atm.bundle.load_bills(10, Denomination::Five);
-        atm.bundle.load_bills(10, Denomination::Ten);
-        atm.bundle.load_bills(10, Denomination::Twenty);
+        atm.bundle.load_all_bills([0, 10, 10, 10]);
 
         let mut expected = Bundle::new();
-        expected.load_bills(2, Denomination::Twenty);
-        expected.load_bills(1, Denomination::Ten);
+
+        expected.load_all_bills([0, 2, 1, 0]);
 
         let mut leftover = Bundle::new();
-        leftover.load_bills(8, Denomination::Twenty);
-        leftover.load_bills(9, Denomination::Ten);
-        leftover.load_bills(10, Denomination::Five);
+
+        leftover.load_all_bills([0, 8, 9, 10]);
 
         assert_eq!(expected, atm.withdraw(50).unwrap());
         assert_eq!(leftover, atm.bundle);

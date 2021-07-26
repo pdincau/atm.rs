@@ -4,7 +4,7 @@ use strum::IntoEnumIterator;
 
 use crate::atm::denomination::Denomination;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Bundle {
     bills: HashMap<Denomination, i32>,
 }
@@ -35,7 +35,7 @@ impl Bundle {
     }
 
     #[allow(dead_code)]
-    pub fn load_all_bills(&mut self, quantities: [i32; 4]) -> &Bundle {
+    pub fn load_all_bills(&mut self, quantities: [i32; 4]) -> Bundle {
         for (index, quantity) in quantities.iter().enumerate() {
             let denomination = match index {
                 0 => Denomination::Fifty,
@@ -45,7 +45,14 @@ impl Bundle {
             };
             self.load_bills(*quantity, denomination);
         }
-        self
+        self.clone()
+    }
+
+    pub fn load_all_bills_of_bundle(&mut self, bundle: Bundle) -> Bundle {
+        for denomination in Denomination::iter() {
+            self.load_bills(bundle.get(denomination), denomination);
+        }
+        self.clone()
     }
 
     #[allow(dead_code)]

@@ -27,6 +27,8 @@ impl Atm {
         let mut withdrawal = Bundle::new();
         let mut remainder = amount;
 
+        let bundle_backup = Bundle::new().load_all_bills_of_bundle(self.bundle.clone());
+
         for denomination in Denomination::iter() {
             let quantity = self.bundle.get(denomination);
             if quantity > 0 {
@@ -38,6 +40,7 @@ impl Atm {
         }
 
         if remainder != 0 {
+            self.bundle = bundle_backup;
             Err(AtmError::NeedsService)
         } else {
             Ok(withdrawal)
@@ -94,8 +97,19 @@ mod tests {
 
         assert_eq!(
             Bundle::new().load_all_bills([0, 2, 1, 0]),
-            &atm.withdraw(50).unwrap()
+            atm.withdraw(50).unwrap()
         );
-        assert_eq!(Bundle::new().load_all_bills([0, 8, 9, 10]), &atm.bundle);
+        assert_eq!(Bundle::new().load_all_bills([0, 8, 9, 10]), atm.bundle);
+    }
+
+    #[test]
+    fn withdraw_fails_for_odd_amounts_and_puts_money_back() {
+        let mut atm = Atm::new();
+
+        atm.bundle.load_all_bills([0, 10, 10, 10]);
+
+        atm.withdraw(11).unwrap_err();
+
+        assert_eq!(Bundle::new().load_all_bills([0, 10, 10, 10]), atm.bundle);
     }
 }

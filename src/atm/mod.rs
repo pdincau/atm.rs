@@ -114,6 +114,7 @@ mod tests {
         check_remainder_and_reload_money(&mut atm, 27, 2);
         check_remainder_and_reload_money(&mut atm, 389, 4);
         check_remainder_and_reload_money(&mut atm, 889, 39);
+        check_remainder_and_reload_money(&mut atm, 10850, 10000);
     }
 
     fn check_remainder_and_reload_money(atm: &mut Atm, amount: i32, reminder: i32) {

@@ -108,9 +108,19 @@ mod tests {
     fn withdraw_fails_for_odd_amounts_and_puts_money_back() {
         let mut atm = Atm::new();
 
-        atm.bundle.load_all_bills([0, 10, 10, 10]);
+        atm.bundle.load_all_bills([10, 10, 10, 10]);
 
-        assert_eq!(NeedsService(1.to_string()), atm.withdraw(11).unwrap_err());
-        assert_eq!(Bundle::new().load_all_bills([0, 10, 10, 10]), atm.bundle);
+        check_remainder_and_reload_money(&mut atm, 11, 1);
+        check_remainder_and_reload_money(&mut atm, 27, 2);
+        check_remainder_and_reload_money(&mut atm, 389, 4);
+        check_remainder_and_reload_money(&mut atm, 889, 39);
+    }
+
+    fn check_remainder_and_reload_money(atm: &mut Atm, amount: i32, reminder: i32) {
+        assert_eq!(
+            NeedsService(reminder.to_string()),
+            atm.withdraw(amount).unwrap_err()
+        );
+        assert_eq!(Bundle::new().load_all_bills([10, 10, 10, 10]), atm.bundle);
     }
 }

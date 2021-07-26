@@ -5,6 +5,7 @@ use thiserror::Error;
 
 use crate::atm::bundle::Bundle;
 use crate::atm::denomination::Denomination;
+use AtmError::NeedsService;
 
 mod bundle;
 mod denomination;
@@ -41,7 +42,7 @@ impl Atm {
 
         if remainder != 0 {
             self.bundle = bundle_backup;
-            Err(AtmError::NeedsService)
+            Err(NeedsService(remainder.to_string()))
         } else {
             Ok(withdrawal)
         }
@@ -50,19 +51,20 @@ impl Atm {
 
 #[derive(Debug, Error, PartialEq)]
 pub enum AtmError {
-    #[error("This ATM requires servicing")]
-    NeedsService,
+    #[error("Not enough money (remainder is {:?})", .0)]
+    NeedsService(String),
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use AtmError::NeedsService;
 
     #[test]
     fn withdraw_fails_if_there_is_not_enough_money() {
         let mut atm = Atm::new();
 
-        assert_eq!(AtmError::NeedsService, atm.withdraw(25).unwrap_err());
+        assert_eq!(NeedsService(25.to_string()), atm.withdraw(25).unwrap_err());
     }
 
     #[test]
@@ -108,8 +110,7 @@ mod tests {
 
         atm.bundle.load_all_bills([0, 10, 10, 10]);
 
-        atm.withdraw(11).unwrap_err();
-
+        assert_eq!(NeedsService(1.to_string()), atm.withdraw(11).unwrap_err());
         assert_eq!(Bundle::new().load_all_bills([0, 10, 10, 10]), atm.bundle);
     }
 }

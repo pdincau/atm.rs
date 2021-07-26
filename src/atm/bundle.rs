@@ -35,7 +35,7 @@ impl Bundle {
     }
 
     #[allow(dead_code)]
-    pub fn load_all_bills(&mut self, quantities: [i32; 4]) {
+    pub fn load_all_bills(&mut self, quantities: [i32; 4]) -> &Bundle {
         for (index, quantity) in quantities.iter().enumerate() {
             let denomination = match index {
                 0 => Denomination::Fifty,
@@ -45,6 +45,7 @@ impl Bundle {
             };
             self.load_bills(*quantity, denomination);
         }
+        self
     }
 
     #[allow(dead_code)]

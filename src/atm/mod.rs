@@ -78,14 +78,12 @@ mod tests {
     fn withdraw_exact_amount_with_two_denominations() {
         let mut atm = Atm::new();
 
-        atm.bundle.load_bills(2, Denomination::Five);
-        atm.bundle.load_bills(4, Denomination::Ten);
+        atm.bundle.load_all_bills([0, 0, 4, 2]);
 
         let bundle = atm.withdraw(50).unwrap();
 
         assert_eq!(50, bundle.get_total_amount());
-        assert_eq!(0, atm.bundle.get(Denomination::Five));
-        assert_eq!(0, atm.bundle.get(Denomination::Ten));
+        assert_eq!(Bundle::new(), atm.bundle);
     }
 
     #[test]
@@ -94,15 +92,7 @@ mod tests {
 
         atm.bundle.load_all_bills([0, 10, 10, 10]);
 
-        let mut expected = Bundle::new();
-
-        expected.load_all_bills([0, 2, 1, 0]);
-
-        let mut leftover = Bundle::new();
-
-        leftover.load_all_bills([0, 8, 9, 10]);
-
-        assert_eq!(expected, atm.withdraw(50).unwrap());
-        assert_eq!(leftover, atm.bundle);
+        assert_eq!(Bundle::new().load_all_bills([0, 2, 1, 0]), &atm.withdraw(50).unwrap());
+        assert_eq!(Bundle::new().load_all_bills([0, 8, 9, 10]), &atm.bundle);
     }
 }

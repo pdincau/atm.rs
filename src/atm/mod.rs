@@ -92,7 +92,10 @@ mod tests {
 
         atm.bundle.load_all_bills([0, 10, 10, 10]);
 
-        assert_eq!(Bundle::new().load_all_bills([0, 2, 1, 0]), &atm.withdraw(50).unwrap());
+        assert_eq!(
+            Bundle::new().load_all_bills([0, 2, 1, 0]),
+            &atm.withdraw(50).unwrap()
+        );
         assert_eq!(Bundle::new().load_all_bills([0, 8, 9, 10]), &atm.bundle);
     }
 }

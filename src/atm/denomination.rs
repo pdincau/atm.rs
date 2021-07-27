@@ -2,10 +2,10 @@ use strum_macros::EnumIter;
 
 #[derive(Copy, Clone, Debug, EnumIter, Eq, Hash, PartialEq)]
 pub enum Denomination {
-    Fifty,
-    Twenty,
-    Ten,
-    Five,
+    Fifty = 50,
+    Twenty = 20,
+    Ten = 10,
+    Five = 5,
 }
 
 
@@ -20,21 +20,12 @@ impl Denomination {
         }
     }
 
-    fn value(&self) -> i32 {
-        match *self {
-            Denomination::Five => 5,
-            Denomination::Ten => 10,
-            Denomination::Twenty => 20,
-            Denomination::Fifty => 50,
-        }
-    }
-
     pub fn times(&self, quantity: i32) -> i32 {
-        self.value() * quantity
+        *self as i32 * quantity
     }
 
     pub fn bills_for(&self, remainder: i32) -> i32 {
-        remainder / self.value()
+        remainder / *self as i32
     }
 }
 

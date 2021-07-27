@@ -11,7 +11,7 @@ mod bundle;
 mod denomination;
 
 #[allow(dead_code)]
-struct Atm {
+pub struct Atm {
     pub bundle: Bundle,
 }
 

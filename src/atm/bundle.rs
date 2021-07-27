@@ -37,13 +37,7 @@ impl Bundle {
     #[allow(dead_code)]
     pub fn load_all_bills(&mut self, quantities: [i32; 4]) -> Bundle {
         for (index, quantity) in quantities.iter().enumerate() {
-            let denomination = match index {
-                0 => Denomination::Fifty,
-                1 => Denomination::Twenty,
-                2 => Denomination::Ten,
-                _ => Denomination::Five,
-            };
-            self.load_bills(*quantity, denomination);
+            self.load_bills(*quantity, Denomination::at(index));
         }
         self.clone()
     }

@@ -8,7 +8,18 @@ pub enum Denomination {
     Five,
 }
 
+
 impl Denomination {
+
+    pub fn at(index: usize) -> Denomination {
+        match index {
+            0 => Denomination::Fifty,
+            1 => Denomination::Twenty,
+            2 => Denomination::Ten,
+            _ => Denomination::Five,
+        }
+    }
+
     fn value(&self) -> i32 {
         match *self {
             Denomination::Five => 5,

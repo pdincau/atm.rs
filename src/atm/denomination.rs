@@ -8,9 +8,7 @@ pub enum Denomination {
     Five = 5,
 }
 
-
 impl Denomination {
-
     pub fn at(index: usize) -> Denomination {
         match index {
             0 => Denomination::Fifty,
